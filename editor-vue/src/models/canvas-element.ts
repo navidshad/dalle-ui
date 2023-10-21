@@ -42,15 +42,18 @@ export class CanvasElement {
 export class ImageCanvaseElement extends CanvasElement {
   src: string;
 
-  constructor(
-    id: string,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    src: string
-  ) {
-    super(id, "image", x, y, width, height);
-    this.src = src;
+  constructor(detail: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    src: string;
+  }) {
+    const id =
+      "image-" + new Date().getTime() + Math.random().toString(36).substring(7);
+
+    super(id, "image", detail.x, detail.y, detail.width, detail.height);
+
+    this.src = detail.src;
   }
 }

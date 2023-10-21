@@ -2,7 +2,7 @@ import { CanvasElement } from "@/models/canvas-element";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export const useCanvaseStore = defineStore("canvase", () => {
+export const useCanvasStore = defineStore("canvase", () => {
   const elements = ref<CanvasElement[]>([]);
 
   function addElement(element: CanvasElement) {
