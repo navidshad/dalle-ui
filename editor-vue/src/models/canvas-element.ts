@@ -49,8 +49,7 @@ export class ImageCanvaseElement extends CanvasElement {
     height: number;
     src: string;
   }) {
-    const id =
-      "image-" + new Date().getTime() + Math.random().toString(36).substring(7);
+    const id = "image-" + Math.random().toString(36).substring(7);
 
     super(id, "image", detail.x, detail.y, detail.width, detail.height);
 
