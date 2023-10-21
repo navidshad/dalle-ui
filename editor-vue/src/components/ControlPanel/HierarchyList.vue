@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { CanvasElement } from "@/models/canvas-element";
 import { useCanvasStore } from "@/store/canvas";
 import { ref, watch } from "vue";
 
@@ -17,15 +16,16 @@ watch(
 </script>
 
 <template>
-  <div class="bg-sky-100">
+  <div class="">
     <v-list>
       <v-list-item
-        v-for="element in canvasStore.elements"
-        :key="element.id"
-        @click="selectedElement = element.id"
+        v-for="layer in canvasStore.layers"
+        :key="layer.id"
+        @click="selectedElement = layer.id"
+        :class="[{ 'bg-gray-200': layer.id === selectedElement }]"
       >
         <v-list-item-content>
-          {{ element.id }}
+          {{ layer.id }}
         </v-list-item-content>
       </v-list-item>
     </v-list>

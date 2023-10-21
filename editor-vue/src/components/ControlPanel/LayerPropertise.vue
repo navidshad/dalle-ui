@@ -3,7 +3,7 @@ const props = defineProps<{ selectedId: string | null }>();
 </script>
 
 <template>
-  <div class="bg-sky-200">
+  <div class="">
     <template v-if="props.selectedId">
       Properties of {{ props.selectedId }}
     </template>

@@ -34,7 +34,7 @@ function onFileChange() {
       height: image.naturalHeight,
     });
 
-    canvasStore.addElement(canvaseElement);
+    canvasStore.addElementLayer(canvaseElement);
     image.src = "";
   };
 }

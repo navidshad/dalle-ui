@@ -3,25 +3,54 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 
 export const useCanvasStore = defineStore("canvase", () => {
-  const elements = ref<CanvasElement[]>([]);
+  const canvasRef = ref<HTMLCanvasElement | null>(null);
+  const layers = ref<CanvasElement[]>([]);
+  const maskPixels = ref<number[][]>([]);
 
-  function addElement(element: CanvasElement) {
-    elements.value.push(element);
+  function addElementLayer(element: CanvasElement) {
+    layers.value.push(element);
   }
 
-  function removeElement(id: string) {
-    const index = elements.value.findIndex((element) => element.id === id);
-    if (index !== -1) elements.value.splice(index, 1);
+  function removeElementLayer(id: string) {
+    const index = layers.value.findIndex((element) => element.id === id);
+    if (index !== -1) layers.value.splice(index, 1);
   }
 
-  function clear() {
-    elements.value = [];
+  function clearLayers() {
+    layers.value = [];
+  }
+
+  function addMaskPixel(x: number, y: number) {
+    if (maskPixels.value.some((pixel) => pixel[0] === x && pixel[1] === y)) {
+      return;
+    }
+
+    const rect = canvasRef.value?.getBoundingClientRect() as DOMRect; // Get the bounding box of the canvas
+
+    const scaleX = (canvasRef.value?.width as number) / rect.width;
+    const scaleY = (canvasRef.value?.height as number) / rect.height;
+    const canvasX = x - rect.left;
+    const canvasY = y - rect.top;
+
+    // console.log(x, y, rect);
+    // console.log(canvasX, canvasY);
+    // console.log("---");
+
+    maskPixels.value.push([canvasX, canvasY]);
+  }
+
+  function setCanvasRef(el: HTMLCanvasElement | null) {
+    canvasRef.value = el;
   }
 
   return {
-    elements,
-    addElement,
-    removeElement,
-    clear,
+    canvasRef,
+    layers,
+    maskPixels,
+    addElementLayer,
+    removeElementLayer,
+    clearLayers,
+    setCanvasRef,
+    addMaskPixel,
   };
 });

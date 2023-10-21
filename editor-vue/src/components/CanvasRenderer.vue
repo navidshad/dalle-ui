@@ -23,13 +23,15 @@ watch(
   (el) => {
     if (el) {
       context.value = canvasEl.value?.getContext("2d") || null;
+      canvasStore.setCanvasRef(canvasEl.value);
+
       draw();
     }
   }
 );
 
 watch(
-  () => canvasStore.elements,
+  [() => canvasStore.maskPixels, () => canvasStore.layers],
   () => {
     draw();
   },
@@ -39,15 +41,36 @@ watch(
 function draw() {
   if (!context.value) return;
 
-  for (const element of canvasStore.elements) {
-    switch (element.type) {
+  for (const layer of canvasStore.layers) {
+    switch (layer.type) {
       case "image":
-        drawImage(element as ImageCanvaseElement);
+        drawImage(layer as ImageCanvaseElement);
         break;
       case "mask":
         // drawMask(element);
         break;
     }
+  }
+
+  // draw mask
+  for (const pixel of canvasStore.maskPixels) {
+    const [x, y] = pixel;
+
+    // context.value.fillStyle = "rgba(0, 0, 0, 0.5)";
+    // context.value.fillRect(x, y, 1, 1);
+
+    const context = canvasEl.value?.getContext("2d");
+    if (!context) return;
+
+    context.lineWidth = 10;
+    context.lineCap = "round";
+    context.strokeStyle = "black";
+
+    context.lineTo(x, y);
+    context.stroke();
+    context.beginPath();
+    context.moveTo(x, y);
+    context.beginPath();
   }
 }
 
