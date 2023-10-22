@@ -2,8 +2,9 @@
   <v-app>
     <Toolbox />
     <ControlPanel />
-    <v-main class="h-screen w-full">
-      <canvas-renderer />
+    <v-main class="h-screen w-full flex flex-col">
+      <canvas-renderer class="flex-1" />
+      <prompt-box />
     </v-main>
   </v-app>
 </template>
@@ -12,4 +13,5 @@
 import Toolbox from "./components/Toolbox/Toolbox.vue";
 import CanvasRenderer from "./components/CanvasRenderer.vue";
 import ControlPanel from "./components/ControlPanel/ControlPanel.vue";
+import PromptBox from "./components/PromptBox.vue";
 </script>

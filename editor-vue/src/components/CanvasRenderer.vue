@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { drawImage, paint } from "@/helper/canvas";
 import { ImageCanvaseElement } from "@/models/canvas-element";
 import { useCanvasStore } from "@/store/canvas";
 import { ref, watch } from "vue";
@@ -44,7 +45,7 @@ function draw() {
   for (const layer of canvasStore.layers) {
     switch (layer.type) {
       case "image":
-        drawImage(layer as ImageCanvaseElement);
+        drawImage(context.value, layer as ImageCanvaseElement);
         break;
       case "mask":
         // drawMask(element);
@@ -54,43 +55,14 @@ function draw() {
 
   // draw mask
   for (const pixel of canvasStore.maskPixels) {
-    const [x, y] = pixel;
-
     // context.value.fillStyle = "rgba(0, 0, 0, 0.5)";
     // context.value.fillRect(x, y, 1, 1);
 
     const context = canvasEl.value?.getContext("2d");
     if (!context) return;
 
-    context.lineWidth = 10;
-    context.lineCap = "round";
-    context.strokeStyle = "black";
-
-    context.lineTo(x, y);
-    context.stroke();
-    context.beginPath();
-    context.moveTo(x, y);
-    context.beginPath();
+    paint(context, pixel);
   }
-}
-
-function drawImage(element: ImageCanvaseElement) {
-  if (!context.value) return;
-
-  const image = new Image();
-  image.src = element.src;
-  image.onload = () => {
-    context.value?.drawImage(
-      image,
-      element.x,
-      element.y,
-      element.width,
-      element.height
-    );
-
-    // clear image from image tag
-    element.src = "";
-  };
 }
 </script>
 

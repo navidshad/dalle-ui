@@ -27,7 +27,7 @@ function onFileChange() {
   image.onload = () => {
     // create a new image
     const canvaseElement = new ImageCanvaseElement({
-      src: URL.createObjectURL(file),
+      src: image,
       x: 0,
       y: 0,
       width: image.naturalWidth,
@@ -35,7 +35,6 @@ function onFileChange() {
     });
 
     canvasStore.addElementLayer(canvaseElement);
-    image.src = "";
   };
 }
 </script>

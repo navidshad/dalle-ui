@@ -40,14 +40,14 @@ export class CanvasElement {
  * a class for image canvas elements
  */
 export class ImageCanvaseElement extends CanvasElement {
-  src: string;
+  src: HTMLImageElement;
 
   constructor(detail: {
     x: number;
     y: number;
     width: number;
     height: number;
-    src: string;
+    src: HTMLImageElement;
   }) {
     const id = "image-" + Math.random().toString(36).substring(7);
 
