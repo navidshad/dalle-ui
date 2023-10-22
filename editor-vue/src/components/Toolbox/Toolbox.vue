@@ -2,6 +2,7 @@
 import { useToolboxStore } from "@/store/toolbox";
 import UploadImage from "./UploadImage.vue";
 import MaskArea from "./MaskArea.vue";
+import RectTool from "./RectTool.vue";
 
 const store = useToolboxStore();
 </script>
@@ -27,6 +28,7 @@ const store = useToolboxStore();
     <v-divider :thickness="2" />
 
     <v-list class="flex flex-col justify-center items-center space-y-2">
+      <RectTool />
       <UploadImage />
     </v-list>
   </v-navigation-drawer>

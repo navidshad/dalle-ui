@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { drawImage, getBlob, paint } from "@/helper/canvas";
+import { drawImage, drawRect, getBlob, paint } from "@/helper/canvas";
 import { ImageCanvaseElement } from "@/models/canvas-element";
 import { useCanvasStore } from "@/store/canvas";
 import { useOpenAiStore } from "@/store/openai";
@@ -27,7 +27,11 @@ async function prepare() {
 
   // draw the images
   for (const layer of canvasStore.layers) {
-    drawImage(context as any, layer as ImageCanvaseElement);
+    if (layer.type == "image") {
+      drawImage(context as any, layer as ImageCanvaseElement);
+    } else if (layer.type == "rect") {
+      drawRect(context as any, layer);
+    }
   }
 
   imageBlob.value = await getBlob(canvas);

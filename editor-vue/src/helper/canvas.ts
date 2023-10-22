@@ -1,4 +1,4 @@
-import { ImageCanvaseElement } from "@/models/canvas-element";
+import { CanvasElement, ImageCanvaseElement } from "@/models/canvas-element";
 
 export function drawImage(
   context: CanvasRenderingContext2D,
@@ -13,6 +13,19 @@ export function drawImage(
     element.width,
     element.height
   );
+}
+
+export function drawRect(
+  context: CanvasRenderingContext2D,
+  element: CanvasElement
+) {
+  context.globalCompositeOperation = "destination-out";
+
+  // draw a box
+  context.beginPath();
+  // color
+  context.fillRect(element.x, element.y, element.width, element.height);
+  context.stroke();
 }
 
 export function paint(

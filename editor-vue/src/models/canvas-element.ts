@@ -1,4 +1,4 @@
-export type CanvasElementType = "image" | "mask";
+export type CanvasElementType = "image" | "rect" | "mask";
 
 /**
  * a base class for all canvas elements
@@ -19,20 +19,20 @@ export class CanvasElement {
     return element.type === "mask";
   }
 
-  constructor(
-    id: string,
-    type: CanvasElementType,
-    x: number,
-    y: number,
-    width: number,
-    height: number
-  ) {
-    this.id = id;
-    this.type = type;
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
+  constructor(detail: {
+    id: string;
+    type: CanvasElementType;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }) {
+    this.id = detail.id;
+    this.type = detail.type;
+    this.x = detail.x;
+    this.y = detail.y;
+    this.width = detail.width;
+    this.height = detail.height;
   }
 }
 
@@ -51,7 +51,14 @@ export class ImageCanvaseElement extends CanvasElement {
   }) {
     const id = "image-" + Math.random().toString(36).substring(7);
 
-    super(id, "image", detail.x, detail.y, detail.width, detail.height);
+    super({
+      id,
+      type: "image",
+      x: detail.x,
+      y: detail.y,
+      width: detail.width,
+      height: detail.height,
+    });
 
     this.src = detail.src;
   }
