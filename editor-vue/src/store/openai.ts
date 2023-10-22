@@ -5,10 +5,10 @@ export const useOpenAiStore = defineStore("openai", () => {
 
   async function editImage(imageBlob: Blob, maskBlob: Blob, prompt: string) {
     // open blobs in new tabs
-    const imageBlobUrl = URL.createObjectURL(imageBlob);
-    const maskBlobUrl = URL.createObjectURL(maskBlob);
-    window.open(imageBlobUrl, "_blank");
-    window.open(maskBlobUrl, "_blank");
+    // const imageBlobUrl = URL.createObjectURL(imageBlob);
+    // const maskBlobUrl = URL.createObjectURL(maskBlob);
+    // window.open(imageBlobUrl, "_blank");
+    // window.open(maskBlobUrl, "_blank");
 
     // debugger;
 
@@ -31,7 +31,7 @@ export const useOpenAiStore = defineStore("openai", () => {
         console.log(data); // Handle the response data
         // debugger;
         // return data[0].url;
-        window.open(data[0].url, "_blank");
+        window.open(data.data[0].url, "_blank");
       })
       .catch((error) => {
         console.error(error); // Handle errors, like network issues or invalid JSON

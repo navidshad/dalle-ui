@@ -20,11 +20,6 @@ export const useCanvasStore = defineStore("canvase", () => {
     return layers.value.find((element) => element.id === id) || null;
   }
 
-  function updateElementLayer(element: CanvasElement) {
-    const index = layers.value.findIndex((e) => e.id === element.id);
-    if (index !== -1) layers.value.splice(index, 1, element);
-  }
-
   function clearLayers() {
     layers.value = [];
   }
@@ -48,6 +43,10 @@ export const useCanvasStore = defineStore("canvase", () => {
     maskPixels.value.push([canvasX, canvasY]);
   }
 
+  function clearMaskPixels() {
+    maskPixels.value = [];
+  }
+
   function setCanvasRef(el: HTMLCanvasElement | null) {
     canvasRef.value = el;
   }
@@ -58,10 +57,10 @@ export const useCanvasStore = defineStore("canvase", () => {
     maskPixels,
     addElementLayer,
     getElementLayer,
-    updateElementLayer,
     removeElementLayer,
     clearLayers,
     setCanvasRef,
     addMaskPixel,
+    clearMaskPixels,
   };
 });

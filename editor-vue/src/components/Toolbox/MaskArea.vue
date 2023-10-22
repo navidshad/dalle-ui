@@ -13,6 +13,16 @@ const isPainting = ref(false);
 
 watch(
   () => isActive.value,
+  (active) => {
+    if (!active) {
+      canvasStore.clearMaskPixels();
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => isActive.value,
   () => {
     if (isActive.value) {
       window.addEventListener("mousedown", startPosition);
