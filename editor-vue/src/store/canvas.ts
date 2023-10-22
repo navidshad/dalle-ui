@@ -16,6 +16,15 @@ export const useCanvasStore = defineStore("canvase", () => {
     if (index !== -1) layers.value.splice(index, 1);
   }
 
+  function getElementLayer(id: string) {
+    return layers.value.find((element) => element.id === id) || null;
+  }
+
+  function updateElementLayer(element: CanvasElement) {
+    const index = layers.value.findIndex((e) => e.id === element.id);
+    if (index !== -1) layers.value.splice(index, 1, element);
+  }
+
   function clearLayers() {
     layers.value = [];
   }
@@ -48,6 +57,8 @@ export const useCanvasStore = defineStore("canvase", () => {
     layers,
     maskPixels,
     addElementLayer,
+    getElementLayer,
+    updateElementLayer,
     removeElementLayer,
     clearLayers,
     setCanvasRef,

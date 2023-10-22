@@ -13,6 +13,13 @@ watch(
   () => selectedElement.value,
   () => emit("select", selectedElement.value)
 );
+
+function removeElementLayer(id: string) {
+  canvasStore.removeElementLayer(id);
+  if (selectedElement.value === id) {
+    selectedElement.value = null;
+  }
+}
 </script>
 
 <template>
@@ -27,6 +34,19 @@ watch(
         <v-list-item-content>
           {{ layer.id }}
         </v-list-item-content>
+
+        <template #append>
+          <v-btn
+            icon
+            @click.stop="removeElementLayer(layer.id)"
+            class="ml-auto"
+            size="xs"
+            variant="text"
+            dense
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </template>
       </v-list-item>
     </v-list>
   </div>

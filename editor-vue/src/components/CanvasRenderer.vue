@@ -42,6 +42,9 @@ watch(
 function draw() {
   if (!context.value) return;
 
+  // clear canvas
+  context.value.clearRect(0, 0, props.width, props.height);
+
   for (const layer of canvasStore.layers) {
     switch (layer.type) {
       case "image":
