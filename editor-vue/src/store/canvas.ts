@@ -4,6 +4,11 @@ import { ref } from "vue";
 
 export const useCanvasStore = defineStore("canvase", () => {
   const canvasRef = ref<HTMLCanvasElement | null>(null);
+  const canvasSize = ref<{ width: number; height: number }>({
+    width: 1024,
+    height: 1024,
+  });
+
   const layers = ref<CanvasElement[]>([]);
   const maskPixels = ref<number[][]>([]);
 
@@ -53,6 +58,7 @@ export const useCanvasStore = defineStore("canvase", () => {
 
   return {
     canvasRef,
+    canvasSize,
     layers,
     maskPixels,
     addElementLayer,

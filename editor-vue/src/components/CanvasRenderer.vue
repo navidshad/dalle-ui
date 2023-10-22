@@ -4,17 +4,6 @@ import { CanvasElement, ImageCanvaseElement } from "@/models/canvas-element";
 import { useCanvasStore } from "@/store/canvas";
 import { ref, watch } from "vue";
 
-const props = defineProps({
-  width: {
-    type: Number,
-    default: 700,
-  },
-  height: {
-    type: Number,
-    default: 700,
-  },
-});
-
 const canvasStore = useCanvasStore();
 const canvasEl = ref<HTMLCanvasElement | null>(null);
 const context = ref<CanvasRenderingContext2D | null>(null);
@@ -43,18 +32,20 @@ function draw() {
   if (!context.value) return;
 
   // clear canvas
-  context.value.clearRect(0, 0, props.width, props.height);
+  context.value.clearRect(
+    0,
+    0,
+    canvasStore.canvasSize.width,
+    canvasStore.canvasSize.height
+  );
 
   for (const layer of canvasStore.layers) {
     switch (layer.type) {
       case "image":
         drawImage(context.value, layer as ImageCanvaseElement);
         break;
-      case "rect":
-        drawRect(context.value, layer);
-        break;
-      case "mask":
-        // drawMask(element);
+      case "rectMask":
+        drawRect({ context: context.value, element: layer });
         break;
     }
   }
@@ -67,7 +58,12 @@ function draw() {
     const context = canvasEl.value?.getContext("2d");
     if (!context) return;
 
-    paint(context, pixel);
+    paint({
+      context: context,
+      maskPixel: pixel,
+      strokeStyle: "rgba(0, 0, 0, 0.5)",
+      globalCompositeOperation: "source-over",
+    });
   }
 }
 </script>
@@ -76,8 +72,8 @@ function draw() {
   <section class="flex justify-center items-center w-full h-full">
     <canvas
       ref="canvasEl"
-      :width="props.width"
-      :height="props.height"
+      :width="canvasStore.canvasSize.width"
+      :height="canvasStore.canvasSize.height"
       class="rounded bg-gray-300"
     />
   </section>

@@ -15,27 +15,47 @@ export function drawImage(
   );
 }
 
-export function drawRect(
-  context: CanvasRenderingContext2D,
-  element: CanvasElement
-) {
-  context.globalCompositeOperation = "destination-out";
+export function drawRect(options: {
+  context: CanvasRenderingContext2D;
+  element: CanvasElement;
+  fillStyle?: string;
+  globalCompositeOperation?: GlobalCompositeOperation;
+}) {
+  const {
+    context,
+    element,
+    fillStyle = "rgba(0, 0, 0, 0.5)",
+    globalCompositeOperation = "source-over",
+  } = options;
 
-  // draw a box
+  context.globalCompositeOperation = globalCompositeOperation;
+
   context.beginPath();
-  // color
+
+  context.fillStyle = fillStyle;
+
   context.fillRect(element.x, element.y, element.width, element.height);
+
   context.stroke();
 }
 
-export function paint(
-  context: CanvasRenderingContext2D,
-  maskPixel: number[],
-  lineWidth = 10,
-  strokeStyle = "black"
-) {
+export function paint(options: {
+  context: CanvasRenderingContext2D;
+  maskPixel: number[];
+  lineWidth?: number;
+  strokeStyle?: any;
+  globalCompositeOperation?: GlobalCompositeOperation;
+}) {
+  const {
+    context,
+    maskPixel,
+    lineWidth = 10,
+    strokeStyle = "black",
+    globalCompositeOperation = "destination-out",
+  } = options;
+
   // erease mode
-  context.globalCompositeOperation = "destination-out";
+  context.globalCompositeOperation = globalCompositeOperation;
 
   context.lineWidth = lineWidth;
   context.lineCap = "round";
@@ -51,6 +71,9 @@ export function paint(
 
 export function getBlob(canvas: HTMLCanvasElement) {
   return new Promise<Blob | null>((resolve) => {
-    canvas.toBlob(resolve, "image/png");
+    canvas.toBlob((blob) => {
+      blob?.type === "image/png";
+      resolve(blob);
+    }, "image/png");
   });
 }

@@ -7,7 +7,7 @@ const canvasStore = useCanvasStore();
 function addRect() {
   canvasStore.addElementLayer(
     new CanvasElement({
-      type: "rect",
+      type: "rectMask",
       x: 0,
       y: 0,
       width: 100,

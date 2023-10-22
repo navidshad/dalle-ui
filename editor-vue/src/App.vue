@@ -3,7 +3,9 @@
     <Toolbox />
     <ControlPanel />
     <v-main class="h-screen w-full flex flex-col">
-      <canvas-renderer class="flex-1" />
+      <div class="flex-1 overflow-hidden">
+        <canvas-renderer class="scale-[0.7]" />
+      </div>
       <prompt-box />
     </v-main>
   </v-app>

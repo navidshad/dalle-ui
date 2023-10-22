@@ -1,4 +1,4 @@
-export type CanvasElementType = "image" | "rect" | "mask";
+export type CanvasElementType = "image" | "rectMask";
 
 /**
  * a base class for all canvas elements
@@ -16,7 +16,7 @@ export class CanvasElement {
   }
 
   static isMask(element: CanvasElement) {
-    return element.type === "mask";
+    return element.type === "rectMask";
   }
 
   constructor(detail: {
