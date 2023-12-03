@@ -31,6 +31,7 @@ async function editWithOpenAi() {
 
   // draw the images
   for (const layer of canvasStore.layers) {
+    if (layer.hidden) continue;
     if (layer.type !== "image") continue;
 
     drawImage(context as any, layer as ImageCanvaseElement);
@@ -49,6 +50,7 @@ async function editWithOpenAi() {
 
   // Paint rectmask
   for (const layer of canvasStore.layers) {
+    if (layer.hidden) continue;
     if (layer.type == "rectMask") {
       drawRect({
         context: context as any,
@@ -77,8 +79,8 @@ async function editWithOpenAi() {
   }
 
   // Open blobs in blank tabs
-  const maskBlobUrl = URL.createObjectURL(maskBlob.value);
-  window.open(maskBlobUrl, "_blank");
+  // const maskBlobUrl = URL.createObjectURL(maskBlob.value);
+  // window.open(maskBlobUrl, "_blank");
 
   const size =
     canvasStore.canvasSize.width + "x" + canvasStore.canvasSize.height;
