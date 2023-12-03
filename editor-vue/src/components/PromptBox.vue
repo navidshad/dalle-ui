@@ -107,6 +107,88 @@ async function editWithOpenAi() {
     });
 }
 
+async function getVariationWithOpenAi() {
+  isGenerating.value = true;
+
+  // create a canva element
+  const canvas = document.createElement("canvas");
+  canvas.width = canvasStore.canvasSize.width;
+  canvas.height = canvasStore.canvasSize.height;
+
+  // get the context
+  const context = canvas.getContext("2d");
+
+  // draw the images
+  for (const layer of canvasStore.layers) {
+    if (layer.hidden) continue;
+    if (layer.type !== "image") continue;
+
+    drawImage(context as any, layer as ImageCanvaseElement);
+  }
+
+  //
+  // Paint the mask
+  //
+
+  // Paint rectmask
+  for (const layer of canvasStore.layers) {
+    if (layer.hidden) continue;
+    if (layer.type == "rectMask") {
+      drawRect({
+        context: context as any,
+        element: layer,
+        fillStyle: "#000000",
+        globalCompositeOperation: "destination-out",
+      });
+    }
+  }
+
+  // Paint brush mask
+  for (const maskPixel of canvasStore.maskPixels) {
+    paint({
+      context: context as any,
+      maskPixel,
+      strokeStyle: "#000000",
+      globalCompositeOperation: "destination-out",
+    });
+  }
+
+  imageBlob.value = await getBlob(canvas);
+
+  if (imageBlob.value === null) {
+    isGenerating.value = false;
+    throw new Error("Image blob is null");
+  }
+
+  // Open blobs in blank tabs
+  // const imageBlobUrl = URL.createObjectURL(imageBlob.value);
+  // window.open(imageBlobUrl, "_blank");
+
+  const size =
+    canvasStore.canvasSize.width + "x" + canvasStore.canvasSize.height;
+
+  aiStore
+    .openaiGenerateVariation(imageBlob.value, size)
+    .then(async (base64) => {
+      const imageLayer = await ImageCanvaseElement.fromBase64Image({
+        base64: base64,
+        width: canvas.width,
+        height: canvas.height,
+        x: 0,
+        y: 0,
+      });
+
+      canvasStore.clearMaskPixels();
+      canvasStore.addElementLayer(imageLayer);
+    })
+    .catch((err) => {
+      console.error(err);
+    })
+    .finally(() => {
+      isGenerating.value = false;
+    });
+}
+
 async function generateWithOpenAi() {
   isGenerating.value = true;
 
@@ -125,7 +207,7 @@ async function generateWithOpenAi() {
         y: 0,
       });
 
-      canvasStore.clearLayers();
+      // canvasStore.clearLayers();
       canvasStore.clearMaskPixels();
       canvasStore.addElementLayer(imageLayer);
     })
@@ -251,13 +333,25 @@ async function generateWithStability() {
         :loading="isGenerating"
         variant="text"
         @click="aiMode == 'openai' ? editWithOpenAi() : generateWithStability()"
+        :disabled="prompt.length == 0"
         v-if="canvasStore.layers.length > 0"
       >
         Edit
       </v-btn>
 
+      <!-- let's waite for dall-3 -->
+      <!-- <v-btn
+        :loading="isGenerating"
+        variant="text"
+        @click="getVariationWithOpenAi()"
+        v-if="canvasStore.layers.length > 0"
+      >
+        New Variation
+      </v-btn> -->
+
       <v-btn
         :loading="isGenerating"
+        :disabled="prompt.length == 0"
         variant="text"
         @click="
           aiMode == 'openai' ? generateWithOpenAi() : generateWithStability()

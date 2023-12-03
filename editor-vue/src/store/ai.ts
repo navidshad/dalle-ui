@@ -1,7 +1,17 @@
 import { defineStore } from "pinia";
 
 export const useAiStore = defineStore("openai", () => {
-  const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+  let OPENAI_API_KEY = ""; //import.meta.env.VITE_OPENAI_API_KEY || "";
+
+  function getAPIKey() {
+    if (!OPENAI_API_KEY.length) {
+      OPENAI_API_KEY = prompt("Enter your OpenAI API key") || "";
+    }
+
+    if (!OPENAI_API_KEY.length) {
+      return Promise.reject("No API key");
+    }
+  }
 
   async function openaiMaskEdit(
     imageBlob: Blob,
@@ -9,14 +19,17 @@ export const useAiStore = defineStore("openai", () => {
     size: string,
     prompt: string
   ) {
+    getAPIKey();
+
     const formData = new FormData();
     formData.append("image", imageBlob, "image.png");
     formData.append("mask", maskBlob, "mask.png");
-    formData.append("model", maskBlob, "dall-e-2");
+    formData.append("model", "dall-e-2");
     formData.append("prompt", prompt);
     formData.append("n", "1");
     formData.append("size", size || "512x512");
     formData.append("response_format", "b64_json");
+    formData.append("user", OPENAI_API_KEY);
 
     return fetch("https://api.openai.com/v1/images/edits", {
       method: "POST",
@@ -39,6 +52,8 @@ export const useAiStore = defineStore("openai", () => {
     size: string,
     quality: "standard" | "hd"
   ) {
+    getAPIKey();
+
     const formData = {
       model: "dall-e-3",
       prompt: prompt,
@@ -46,6 +61,7 @@ export const useAiStore = defineStore("openai", () => {
       size: size || "1024x1024",
       quality: quality || "standard",
       response_format: "b64_json",
+      user: OPENAI_API_KEY,
     };
 
     return fetch("https://api.openai.com/v1/images/generations", {
@@ -55,6 +71,35 @@ export const useAiStore = defineStore("openai", () => {
         "content-type": "application/json",
       },
       body: JSON.stringify(formData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        return data.data[0].b64_json;
+      })
+      .catch((error) => {
+        console.error(error); // Handle errors, like network issues or invalid JSON
+      });
+  }
+
+  async function openaiGenerateVariation(imageBlob: Blob, size: string) {
+    getAPIKey();
+
+    const formData = new FormData();
+
+    formData.append("image", imageBlob, "image.png");
+    formData.append("model", "dall-e-2");
+
+    formData.append("n", "1");
+    formData.append("size", size || "512x512");
+    formData.append("response_format", "b64_json");
+    formData.append("user", OPENAI_API_KEY);
+
+    return fetch("https://api.openai.com/v1/images/variations", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + OPENAI_API_KEY,
+      },
+      body: formData,
     })
       .then((response) => response.json())
       .then((data) => {
@@ -177,5 +222,10 @@ export const useAiStore = defineStore("openai", () => {
     });
   }
 
-  return { openaiMaskEdit, openaiGenerate, stabilityMaskEdit };
+  return {
+    openaiMaskEdit,
+    openaiGenerate,
+    openaiGenerateVariation,
+    stabilityMaskEdit,
+  };
 });
