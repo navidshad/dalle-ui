@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { drawImage, drawRect, paint } from "@/helper/canvas";
-import { CanvasElement, ImageCanvaseElement } from "@/models/canvas-element";
+import { ImageCanvaseElement } from "@/models/canvas-element";
 import { useCanvasStore } from "@/store/canvas";
 import { ref, watch } from "vue";
 
@@ -40,6 +40,8 @@ function draw() {
   );
 
   for (const layer of canvasStore.layers) {
+    if (layer.hidden) continue;
+
     switch (layer.type) {
       case "image":
         drawImage(context.value, layer as ImageCanvaseElement);

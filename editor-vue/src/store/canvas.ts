@@ -56,6 +56,11 @@ export const useCanvasStore = defineStore("canvase", () => {
     canvasRef.value = el;
   }
 
+  function setActive(id: any, key: boolean) {
+    const index = layers.value.findIndex((element) => element.id === id);
+    if (index !== -1) layers.value[index].hidden = key;
+  }
+
   return {
     canvasRef,
     canvasSize,
@@ -68,5 +73,6 @@ export const useCanvasStore = defineStore("canvase", () => {
     setCanvasRef,
     addMaskPixel,
     clearMaskPixels,
+    setActive,
   };
 });

@@ -6,15 +6,17 @@ export const useAiStore = defineStore("openai", () => {
   async function openaiMaskEdit(
     imageBlob: Blob,
     maskBlob: Blob,
+    size: string,
     prompt: string
   ) {
     const formData = new FormData();
     formData.append("image", imageBlob, "image.png");
     formData.append("mask", maskBlob, "mask.png");
-    formData.append("model", maskBlob, "dall-e-3");
+    formData.append("model", maskBlob, "dall-e-2");
     formData.append("prompt", prompt);
     formData.append("n", "1");
-    formData.append("size", "512x512");
+    formData.append("size", size || "512x512");
+    formData.append("response_format", "b64_json");
 
     return fetch("https://api.openai.com/v1/images/edits", {
       method: "POST",
@@ -25,11 +27,7 @@ export const useAiStore = defineStore("openai", () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data); // Handle the response data
-        // debugger;
-        // return data[0].url;
-        window.open(data.data[0].url, "_blank");
-        return data.data[0].url;
+        return data.data[0].b64_json;
       })
       .catch((error) => {
         console.error(error); // Handle errors, like network issues or invalid JSON
@@ -47,6 +45,7 @@ export const useAiStore = defineStore("openai", () => {
       n: 1,
       size: size || "1024x1024",
       quality: quality || "standard",
+      response_format: "b64_json",
     };
 
     return fetch("https://api.openai.com/v1/images/generations", {
@@ -59,9 +58,7 @@ export const useAiStore = defineStore("openai", () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
-        window.open(data.data[0].url, "_blank");
-        return data.data[0].url;
+        return data.data[0].b64_json;
       })
       .catch((error) => {
         console.error(error); // Handle errors, like network issues or invalid JSON

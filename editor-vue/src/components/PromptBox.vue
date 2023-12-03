@@ -20,6 +20,7 @@ const maskBlob = ref<Blob | null>(null);
 
 async function editWithOpenAi() {
   isGenerating.value = true;
+
   // create a canva element
   const canvas = document.createElement("canvas");
   canvas.width = canvasStore.canvasSize.width;
@@ -30,11 +31,9 @@ async function editWithOpenAi() {
 
   // draw the images
   for (const layer of canvasStore.layers) {
-    if (layer.type == "image") {
-      drawImage(context as any, layer as ImageCanvaseElement);
-    } else if (layer.type == "rectMask") {
-      drawRect({ context: context as any, element: layer });
-    }
+    if (layer.type !== "image") continue;
+
+    drawImage(context as any, layer as ImageCanvaseElement);
   }
 
   imageBlob.value = await getBlob(canvas);
@@ -44,9 +43,30 @@ async function editWithOpenAi() {
     throw new Error("Image blob is null");
   }
 
+  //
   // Paint the mask
+  //
+
+  // Paint rectmask
+  for (const layer of canvasStore.layers) {
+    if (layer.type == "rectMask") {
+      drawRect({
+        context: context as any,
+        element: layer,
+        fillStyle: "#000000",
+        globalCompositeOperation: "destination-out",
+      });
+    }
+  }
+
+  // Paint brush mask
   for (const maskPixel of canvasStore.maskPixels) {
-    paint({ context: context as any, maskPixel });
+    paint({
+      context: context as any,
+      maskPixel,
+      strokeStyle: "#000000",
+      globalCompositeOperation: "destination-out",
+    });
   }
 
   maskBlob.value = await getBlob(canvas);
@@ -56,8 +76,26 @@ async function editWithOpenAi() {
     throw new Error("Mask blob is null");
   }
 
+  // Open blobs in blank tabs
+  const maskBlobUrl = URL.createObjectURL(maskBlob.value);
+  window.open(maskBlobUrl, "_blank");
+
+  const size =
+    canvasStore.canvasSize.width + "x" + canvasStore.canvasSize.height;
+
   aiStore
-    .openaiGenerate(prompt.value)
+    .openaiMaskEdit(imageBlob.value, maskBlob.value, size, prompt.value)
+    .then(async (base64) => {
+      const imageLayer = await ImageCanvaseElement.fromBase64Image({
+        base64: base64,
+        width: canvas.width,
+        height: canvas.height,
+        x: 0,
+        y: 0,
+      });
+
+      canvasStore.addElementLayer(imageLayer);
+    })
     .catch((err) => {
       console.error(err);
     })
@@ -75,9 +113,9 @@ async function generateWithOpenAi() {
 
   aiStore
     .openaiGenerate(submittedPrompt, submittedSize, submittedQuality)
-    .then(async (imageUrl) => {
-      const imageLayer = await ImageCanvaseElement.fromImageURL({
-        url: imageUrl,
+    .then(async (base64) => {
+      const imageLayer = await ImageCanvaseElement.fromBase64Image({
+        base64: base64,
         width: parseInt(submittedSize.split("x")[0]),
         height: parseInt(submittedSize.split("x")[1]),
         x: 0,
@@ -165,6 +203,7 @@ async function generateWithStability() {
 
 <template>
   <div class="flex justify-center items-center space-x-2 px-4">
+    <!-- Prompt properties -->
     <div class="flex-1">
       <div class="flex space-x-2">
         <v-select
@@ -200,14 +239,27 @@ async function generateWithStability() {
         v-model="prompt"
       />
     </div>
-    <v-btn
-      :loading="isGenerating"
-      variant="text"
-      @click="
-        aiMode == 'openai' ? generateWithOpenAi() : generateWithStability()
-      "
-    >
-      Generate
-    </v-btn>
+
+    <!-- Action buttons -->
+    <div class="flex flex-col">
+      <v-btn
+        :loading="isGenerating"
+        variant="text"
+        @click="aiMode == 'openai' ? editWithOpenAi() : generateWithStability()"
+        v-if="canvasStore.layers.length > 0"
+      >
+        Edit
+      </v-btn>
+
+      <v-btn
+        :loading="isGenerating"
+        variant="text"
+        @click="
+          aiMode == 'openai' ? generateWithOpenAi() : generateWithStability()
+        "
+      >
+        Generate
+      </v-btn>
+    </div>
   </div>
 </template>

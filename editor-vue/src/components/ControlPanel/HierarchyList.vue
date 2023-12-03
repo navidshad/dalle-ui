@@ -38,6 +38,18 @@ function removeElementLayer(id: string) {
         <template #append>
           <v-btn
             icon
+            class="ml-auto"
+            size="xs"
+            variant="text"
+            dense
+            @click="canvasStore.setActive(layer.id, !layer.hidden)"
+          >
+            <v-icon v-if="!layer.hidden">mdi-eye</v-icon>
+            <v-icon v-if="layer.hidden">mdi-eye-off</v-icon>
+          </v-btn>
+
+          <v-btn
+            icon
             @click.stop="removeElementLayer(layer.id)"
             class="ml-auto"
             size="xs"

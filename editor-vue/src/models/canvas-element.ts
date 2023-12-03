@@ -10,6 +10,7 @@ export class CanvasElement {
   y: number;
   width: number;
   height: number;
+  hidden: boolean = false;
 
   static isImage(element: CanvasElement): element is ImageCanvaseElement {
     return element.type === "image";
@@ -43,8 +44,8 @@ export class ImageCanvaseElement extends CanvasElement {
   src: HTMLImageElement;
   isLoaded: boolean = false;
 
-  static fromImageURL(detail: {
-    url: string;
+  static fromBase64Image(detail: {
+    base64: string;
     x: number;
     y: number;
     width: number;
@@ -69,7 +70,7 @@ export class ImageCanvaseElement extends CanvasElement {
         reject(e);
       };
 
-      image.src = detail.url;
+      image.src = `data:image/png;base64,${detail.base64}`;
     });
   }
 
