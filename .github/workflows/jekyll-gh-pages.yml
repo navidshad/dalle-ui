@@ -30,8 +30,8 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Yarn Install and Build
-        woworking-directory: editor-vue
         run: |
+          cd editor-vue
           yarn install
           yarn build
           
