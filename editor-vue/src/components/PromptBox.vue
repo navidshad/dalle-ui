@@ -10,13 +10,15 @@ const canvasStore = useCanvasStore();
 const aiStore = useAiStore();
 
 const aiMode = ref<"openai" | "stabilityai">("openai");
+const size = ref<"1024x1024" | "1792x1024" | "1024x1792">("1024x1024");
+const quality = ref<"standard" | "hd">("standard");
 const isGenerating = ref(false);
 const prompt = ref("");
 
 const imageBlob = ref<Blob | null>(null);
 const maskBlob = ref<Blob | null>(null);
 
-async function generateWithOpenAi() {
+async function editWithOpenAi() {
   isGenerating.value = true;
   // create a canva element
   const canvas = document.createElement("canvas");
@@ -55,7 +57,35 @@ async function generateWithOpenAi() {
   }
 
   aiStore
-    .openaiMaskEdit(imageBlob.value, maskBlob.value, prompt.value)
+    .openaiGenerate(prompt.value)
+    .catch((err) => {
+      console.error(err);
+    })
+    .finally(() => {
+      isGenerating.value = false;
+    });
+}
+
+async function generateWithOpenAi() {
+  isGenerating.value = true;
+
+  const submittedPrompt = prompt.value;
+  const submittedSize = size.value;
+  const submittedQuality = quality.value;
+
+  aiStore
+    .openaiGenerate(submittedPrompt, submittedSize, submittedQuality)
+    .then(async (imageUrl) => {
+      const imageLayer = await ImageCanvaseElement.fromImageURL({
+        url: imageUrl,
+        width: parseInt(submittedSize.split("x")[0]),
+        height: parseInt(submittedSize.split("x")[1]),
+        x: 0,
+        y: 0,
+      });
+
+      canvasStore.addElementLayer(imageLayer);
+    })
     .catch((err) => {
       console.error(err);
     })
@@ -136,11 +166,34 @@ async function generateWithStability() {
 <template>
   <div class="flex justify-center items-center space-x-2 px-4">
     <div class="flex-1">
-      <v-select
-        v-model="aiMode"
-        :items="['openai', 'stabilityai']"
-        label="AI Mode"
-      />
+      <div class="flex space-x-2">
+        <v-select
+          v-model="aiMode"
+          :items="[
+            'openai',
+            // 'stabilityai'
+          ]"
+          label="AI Mode"
+        />
+        <v-select
+          v-model="size"
+          :items="[
+            { title: '1024x1024', value: '1024x1024' },
+            // { title: '1792x1024', value: '1792x1024' },
+            // { title: '1024x1792', value: '1024x1792' },
+          ]"
+          label="Size"
+        />
+        <v-select
+          v-model="quality"
+          :items="[
+            { title: 'Standard $0.040', value: 'standard' },
+            { title: 'HD $0.080', value: 'hd' },
+          ]"
+          label="quality"
+        />
+      </div>
+
       <v-textarea
         placeholder="Write your prompt here..."
         rows="3"

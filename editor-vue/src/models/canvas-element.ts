@@ -1,7 +1,7 @@
 export type CanvasElementType = "image" | "rectMask";
 
 /**
- * a base class for all canvas elements
+ * A base class for all canvas elements
  */
 export class CanvasElement {
   id: string;
@@ -37,10 +37,41 @@ export class CanvasElement {
 }
 
 /**
- * a class for image canvas elements
+ *  Image canvas elements
  */
 export class ImageCanvaseElement extends CanvasElement {
   src: HTMLImageElement;
+  isLoaded: boolean = false;
+
+  static fromImageURL(detail: {
+    url: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }) {
+    return new Promise<ImageCanvaseElement>((resolve, reject) => {
+      const image = new Image();
+
+      image.onload = () => {
+        resolve(
+          new ImageCanvaseElement({
+            x: detail.x,
+            y: detail.y,
+            width: detail.width,
+            height: detail.height,
+            src: image,
+          })
+        );
+      };
+
+      image.onerror = (e) => {
+        reject(e);
+      };
+
+      image.src = detail.url;
+    });
+  }
 
   constructor(detail: {
     x: number;

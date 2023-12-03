@@ -8,17 +8,10 @@ export const useAiStore = defineStore("openai", () => {
     maskBlob: Blob,
     prompt: string
   ) {
-    // open blobs in new tabs
-    // const imageBlobUrl = URL.createObjectURL(imageBlob);
-    // const maskBlobUrl = URL.createObjectURL(maskBlob);
-    // window.open(imageBlobUrl, "_blank");
-    // window.open(maskBlobUrl, "_blank");
-
-    // debugger;
-
     const formData = new FormData();
     formData.append("image", imageBlob, "image.png");
     formData.append("mask", maskBlob, "mask.png");
+    formData.append("model", maskBlob, "dall-e-3");
     formData.append("prompt", prompt);
     formData.append("n", "1");
     formData.append("size", "512x512");
@@ -36,6 +29,39 @@ export const useAiStore = defineStore("openai", () => {
         // debugger;
         // return data[0].url;
         window.open(data.data[0].url, "_blank");
+        return data.data[0].url;
+      })
+      .catch((error) => {
+        console.error(error); // Handle errors, like network issues or invalid JSON
+      });
+  }
+
+  async function openaiGenerate(
+    prompt: string,
+    size: string,
+    quality: "standard" | "hd"
+  ) {
+    const formData = {
+      model: "dall-e-3",
+      prompt: prompt,
+      n: 1,
+      size: size || "1024x1024",
+      quality: quality || "standard",
+    };
+
+    return fetch("https://api.openai.com/v1/images/generations", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + OPENAI_API_KEY,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        window.open(data.data[0].url, "_blank");
+        return data.data[0].url;
       })
       .catch((error) => {
         console.error(error); // Handle errors, like network issues or invalid JSON
@@ -154,5 +180,5 @@ export const useAiStore = defineStore("openai", () => {
     });
   }
 
-  return { openaiMaskEdit, stabilityMaskEdit };
+  return { openaiMaskEdit, openaiGenerate, stabilityMaskEdit };
 });
