@@ -49,7 +49,7 @@ export function paint(options: {
   const {
     context,
     maskPixel,
-    lineWidth = 10,
+    lineWidth = 30,
     strokeStyle = "black",
     globalCompositeOperation = "destination-out",
   } = options;

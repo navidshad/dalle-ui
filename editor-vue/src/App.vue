@@ -2,9 +2,9 @@
   <v-app>
     <Toolbox />
     <ControlPanel />
-    <v-main class="h-screen w-full flex flex-col">
+    <v-main class="w-full">
       <div class="flex-1 overflow-hidden">
-        <canvas-renderer class="scale-[0.7]" />
+        <canvas-renderer />
       </div>
       <prompt-box />
     </v-main>

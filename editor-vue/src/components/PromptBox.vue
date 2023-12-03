@@ -96,6 +96,7 @@ async function editWithOpenAi() {
         y: 0,
       });
 
+      canvasStore.clearMaskPixels();
       canvasStore.addElementLayer(imageLayer);
     })
     .catch((err) => {
@@ -124,6 +125,8 @@ async function generateWithOpenAi() {
         y: 0,
       });
 
+      canvasStore.clearLayers();
+      canvasStore.clearMaskPixels();
       canvasStore.addElementLayer(imageLayer);
     })
     .catch((err) => {

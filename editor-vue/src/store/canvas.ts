@@ -36,14 +36,9 @@ export const useCanvasStore = defineStore("canvase", () => {
 
     const rect = canvasRef.value?.getBoundingClientRect() as DOMRect; // Get the bounding box of the canvas
 
-    const scaleX = (canvasRef.value?.width as number) / rect.width;
-    const scaleY = (canvasRef.value?.height as number) / rect.height;
-    const canvasX = x - rect.left;
-    const canvasY = y - rect.top;
-
-    // console.log(x, y, rect);
-    // console.log(canvasX, canvasY);
-    // console.log("---");
+    // Get the mouse position relative to the canvas
+    const canvasX = Math.floor(x);
+    const canvasY = Math.floor(y);
 
     maskPixels.value.push([canvasX, canvasY]);
   }

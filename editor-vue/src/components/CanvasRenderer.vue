@@ -71,7 +71,7 @@ function draw() {
 </script>
 
 <template>
-  <section class="flex justify-center items-center w-full h-full">
+  <section>
     <canvas
       ref="canvasEl"
       :width="canvasStore.canvasSize.width"
