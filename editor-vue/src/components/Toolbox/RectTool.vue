@@ -86,8 +86,8 @@ function endPosition() {
         <div
           class="absolute z-50 border-2 border-yellow-300"
           :style="{
-            width: selectArea.width + 'px',
-            height: selectArea.height + 'px',
+            'min-width': selectArea.width + 'px',
+            'min-height': selectArea.height + 'px',
             top: selectArea.y + 'px',
             left: selectArea.x + 'px',
           }"
