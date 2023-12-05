@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { useCanvasStore } from "@/store/canvas";
 import { useToolboxStore } from "@/store/toolbox";
-import { watch } from "vue";
-import { computed } from "vue";
-import { ref } from "vue";
+import { watch, computed, ref } from "vue";
 
 const toolboxStore = useToolboxStore();
 const canvasStore = useCanvasStore();
 
-const isActive = computed(() => toolboxStore.type === "mask");
+const isActive = computed(() => toolboxStore.type === "mask-brush");
 const isPainting = ref(false);
 
 watch(

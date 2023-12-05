@@ -71,7 +71,7 @@ function draw() {
 </script>
 
 <template>
-  <section>
+  <section id="canvas-container" class="relative">
     <canvas
       ref="canvasEl"
       :width="canvasStore.canvasSize.width"

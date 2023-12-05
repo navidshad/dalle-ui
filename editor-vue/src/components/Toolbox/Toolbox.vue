@@ -20,15 +20,19 @@ const store = useToolboxStore();
       </v-btn>
 
       <MaskArea
-        :class="[{ 'bg-sky-400 text-white': store.type === 'mask' }]"
-        @click="store.setType('mask')"
+        :class="[{ 'bg-sky-400 text-white': store.type === 'mask-brush' }]"
+        @click="store.setType('mask-brush')"
+      />
+
+      <RectTool
+        :class="[{ 'bg-sky-400 text-white': store.type === 'mask-rectangle' }]"
+        @click="store.setType('mask-rectangle')"
       />
     </v-list>
 
     <v-divider :thickness="2" />
 
     <v-list class="flex flex-col justify-center items-center space-y-2">
-      <RectTool />
       <UploadImage />
     </v-list>
   </v-navigation-drawer>

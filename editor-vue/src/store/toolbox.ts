@@ -2,7 +2,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export type ToolType = "none" | "mask";
+export type ToolType = "none" | "mask-brush" | "mask-rectangle";
 
 export const useToolboxStore = defineStore("toolbox", () => {
   const type = ref<ToolType>("none");
